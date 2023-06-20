@@ -28,7 +28,6 @@ const reducer = (state, action) => {
         inputs: initialState.inputs,
       };
     case 'SET_ITEMS':
-      console.log("reducer", action.payload.items);
       return {
         ...state,
         items: action.payload.items,
@@ -51,7 +50,6 @@ const reducer = (state, action) => {
 const Provider = ({children}) => {
   useEffect(() => {
     Firestore.readDocs().then((docs) => {
-      console.log("Provider", docs);
       dispatch({type: 'SET_ITEMS', payload: {items: docs}});
     });
   }, []);
