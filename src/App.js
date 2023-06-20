@@ -1,17 +1,47 @@
-import './App.css';
+import {useEffect, useReducer, useState} from "react";
 import Navbar from "./components/Navbar";
 import Card from "./components/Card";
-import {useEffect, useState} from "react";
 import UploadForm from "./components/UploadForm";
+import './App.css';
 
-const photos = [
-  'https://picsum.photos/id/1001/200/200',
-];
+const initialState = {
+  items: [],
+  count: 0,
+  inputs: {title: null, file: null, path: null},
+  isCollapsed: false,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'ADD_ITEM':
+      return {
+        ...state,
+        items: [action.payload.path, ...state.items],
+      };
+    case 'SET_COUNT':
+      return {
+        ...state,
+        count: action.payload,
+      };
+    case 'SET_INPUTS':
+      return {
+        ...state,
+        inputs: action.payload,
+      };
+    case 'SET_IS_COLLAPSED':
+      return {
+        ...state,
+        isCollapsed: action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
 function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
   const [count, setCount] = useState("");
   const [inputs, setInputs] = useState({title: null, file: null, path: null});
-  const [items, setItems] = useState(photos);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toggle = () => setIsCollapsed(!isCollapsed);
@@ -24,14 +54,18 @@ function App() {
   }
   const handleOnSubmit = (e) => {
     e.preventDefault();
-    setItems([inputs.path, ...items]);
+    dispatch({type: 'ADD_ITEM', payload: {path: inputs.path}});
     setInputs({title: null, file: null, path: null});
     setIsCollapsed(false);
   }
 
   useEffect(() => {
-    setCount(`You have ${items.length} photo${items.length > 1 ? 's' : ''} in your gallery`);
-  }, [items]);
+    console.log(state);
+  }, [state.items]);
+
+  useEffect(() => {
+    setCount(`You have ${state.items.length} photo${state.items.length > 1 ? 's' : ''} in your gallery`);
+  }, [state.items]);
 
   return (
     <>
@@ -45,7 +79,7 @@ function App() {
         <h1>Gallery</h1>
         {count}
         <div className="row">
-          {items.map((photo, index) => <Card key={index} src={photo} />)}
+          {state.items.map((photo, index) => <Card key={index} src={photo} />)}
         </div>
       </div>
     </>
