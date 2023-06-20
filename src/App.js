@@ -1,7 +1,6 @@
-import {useEffect, useReducer, useState} from "react";
-import Navbar from "./components/Navbar";
+import {useMemo, useReducer} from "react";
 import Card from "./components/Card";
-import UploadForm from "./components/UploadForm";
+import Layout from "./components/Layout";
 import './App.css';
 
 const initialState = {
@@ -25,6 +24,8 @@ const reducer = (state, action) => {
       return {
         ...state,
         items: [state.inputs, ...state.items],
+        count: state.items.length + 1,
+        inputs: initialState.inputs,
       };
     case 'SET_INPUTS':
       return {
@@ -43,7 +44,6 @@ const reducer = (state, action) => {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [count, setCount] = useState("");
 
   const toggle = (bool) => dispatch({type: 'SET_IS_COLLAPSED', payload: {bool}});
   const handleOnChange = (e) => dispatch({type: 'SET_INPUTS', payload: {value: e}});
@@ -53,26 +53,19 @@ function App() {
     toggle(!state.isCollapsed);
   }
 
-  useEffect(() => {
-    setCount(`You have ${state.items.length} photo${state.items.length > 1 ? 's' : ''} in your gallery`);
-  }, [state.items]);
+  const count = useMemo(
+      () => `You have ${state.items.length} photo${state.items.length > 1 ? 's' : ''} in your gallery`,
+      [state.items]
+  );
 
   return (
-    <>
-      <Navbar/>
-      <div className="container text-center mt-5">
-        <button onClick={() => toggle(!state.isCollapsed)} className="btn btn-success float-end">
-          {!state.isCollapsed ? "+ Add" : "Close"}
-        </button>
-        <div className="clearfix mb-4"></div>
-        <UploadForm inputs={state.inputs} isVisible={state.isCollapsed} onChange={handleOnChange} onSubmit={handleOnSubmit} />
+      <Layout state={state} onChange={handleOnChange} onSubmit={handleOnSubmit} toggle={toggle}>
         <h1>Gallery</h1>
         {count}
         <div className="row">
-          {state.items.map((photo, index) => <Card key={index} src={photo.path} />)}
+          {state.items.map((item, index) => <Card key={index} {...item} />)}
         </div>
-      </div>
-    </>
+      </Layout>
   );
 }
 
