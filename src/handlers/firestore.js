@@ -22,8 +22,14 @@ export const Firestore = {
       const randomIndex = Math.floor(Math.random() * 100000000);
       try {
         const docRef = doc(db, collectionName || 'stocks', `${randomIndex}`);
-        await setDoc(docRef, {title: inputs.title, path: inputs.path, createdAt: serverTimestamp()});
-        resolve('New doc successfully inserted');
+        const newDoc = {
+          title: inputs.title,
+          path: inputs.path,
+          createdAt: serverTimestamp(),
+          user: inputs.user
+        };
+        await setDoc(docRef, newDoc);
+        resolve('New doc created');
       } catch (e) {
         console.error(e);
         resolve('Error inserting new doc');

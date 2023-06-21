@@ -1,13 +1,14 @@
 import {useContext, useMemo} from "react";
-import {Context} from "../context";
+import {FirebaseContext} from "../context/FirebaseContext";
 import {Firestore} from "../handlers/firestore";
 import Storage from "../handlers/storage";
+import {useAuthContext} from "../context/AuthContext";
 
 const {writeDoc} = Firestore;
 const {downloadFile, uploadFile} = Storage;
 
 const Preview = () => {
-  const {state} = useContext(Context);
+  const {state} = useContext(FirebaseContext);
   const {path} = state.inputs;
   return path && (
       <div
@@ -15,7 +16,7 @@ const Preview = () => {
           style={{
             width: "30%",
             height: "300px",
-            backgroundImage: `url(${path}`,
+            backgroundImage: `url(${path})`,
             backgroundSize: "cover",
           }}
       ></div>
@@ -23,10 +24,14 @@ const Preview = () => {
 };
 
 const UploadForm = () => {
-  const {dispatch, state: {inputs, isCollapsed}} = useContext(Context);
+  const {currentUser} = useAuthContext();
+  const {dispatch, state: {inputs, isCollapsed}, read} = useContext(FirebaseContext);
   const isDisabled = useMemo(() => {
     return !!Object.values(inputs).some((input) => input === null);
   }, [inputs]);
+  const username = useMemo(() => {
+    return currentUser?.displayName.toLowerCase().split(" ").join("");
+  }, [currentUser]);
 
   const handleOnChange = (e) => dispatch({type: 'SET_INPUTS', payload: {value: e}});
   const handleOnSubmit = (e) => {
@@ -34,8 +39,8 @@ const UploadForm = () => {
     uploadFile(inputs)
         .then(downloadFile)
         .then((url) => {
-              writeDoc({...inputs, path: url}).then(() => {
-                dispatch({type: 'ADD_ITEM'});
+              writeDoc({...inputs, path: url, user: username}).then(() => {
+                read();
                 dispatch({type: 'SET_IS_COLLAPSED', payload: {bool: true}});
               });
             }

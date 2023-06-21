@@ -1,10 +1,10 @@
 import UploadForm from "./UploadForm";
 import Navbar from "./Navbar";
-import {Context} from "../context";
+import {FirebaseContext} from "../context/FirebaseContext";
 import {useContext} from "react";
 
 const Layout = ({children}) => {
-  const {dispatch, state: {isCollapsed}} = useContext(Context);
+  const {dispatch, state: {isCollapsed}} = useContext(FirebaseContext);
   const toggle = (bool) => dispatch({type: 'SET_IS_COLLAPSED', payload: {bool}});
 
   return (

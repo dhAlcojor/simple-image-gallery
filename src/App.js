@@ -1,16 +1,22 @@
-import {useContext, useMemo} from "react";
+import {useContext, useEffect, useMemo} from "react";
 import Card from "./components/Card";
 import Layout from "./components/Layout";
-import {Context} from "./context";
+import {FirebaseContext} from "./context/FirebaseContext";
 import './App.css';
+import {useAuthContext} from "./context/AuthContext";
 
 function App() {
-  const {state: {items}} = useContext(Context);
+  const {state: {items}} = useContext(FirebaseContext);
+  const {authenticate} = useAuthContext();
 
   const count = useMemo(
       () => `You have ${items.length} photo${items.length > 1 ? 's' : ''} in your gallery`,
       [items]
   );
+
+  useEffect(() => {
+    authenticate();
+  }, []);
 
   return (
       <Layout>

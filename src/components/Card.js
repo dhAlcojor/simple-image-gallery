@@ -1,7 +1,7 @@
 import {useMemo} from "react";
 
-const Card = ({path, title, createdAt}) => {
-  const timestamp = useMemo(() => new Date(createdAt.seconds * 1000).toLocaleDateString(), [createdAt]);
+const Card = ({path, title, createdAt, user}) => {
+  const timestamp = useMemo(() => createdAt ? new Date(createdAt.seconds * 1000).toLocaleDateString() : "", [createdAt]);
   return (
       <div className="col mb-5">
         <div className="card" style={{width: "18rem"}}>
@@ -14,7 +14,7 @@ const Card = ({path, title, createdAt}) => {
           <h5 className="text-center mt-1">{title}</h5>
           <div className="d-flex justify-content-between p-2">
             <p>{timestamp}</p>
-            <i>@username</i>
+            <i>@{user || "username"}</i>
           </div>
         </div>
       </div>

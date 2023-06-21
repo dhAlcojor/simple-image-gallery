@@ -1,16 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Provider from "./context";
+import Provider from "./context/FirebaseContext";
 import reportWebVitals from './reportWebVitals';
 import App from './App';
 import './index.css';
+import AuthProvider from "./context/AuthContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
-      <Provider>
-        <App/>
-      </Provider>
+      <AuthProvider>
+        <Provider>
+          <App/>
+        </Provider>
+      </AuthProvider>
     </React.StrictMode>
 );
 
