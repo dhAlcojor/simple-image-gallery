@@ -1,9 +1,8 @@
 import {useContext, useEffect, useMemo} from "react";
-import Card from "./components/Card";
-import Layout from "./components/Layout";
 import {FirebaseContext} from "./context/FirebaseContext";
 import './App.css';
 import {useAuthContext} from "./context/AuthContext";
+import List from "./components/List";
 
 function App() {
   const {state: {items}} = useContext(FirebaseContext);
@@ -19,13 +18,11 @@ function App() {
   }, []);
 
   return (
-      <Layout>
+      <>
         <h1>Gallery</h1>
         {count}
-        <div className="row">
-          {items.map((item, index) => <Card key={index} {...item} />)}
-        </div>
-      </Layout>
+        <List items={items}/>
+      </>
   );
 }
 

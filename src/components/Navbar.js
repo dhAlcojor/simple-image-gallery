@@ -1,5 +1,6 @@
 import {useAuthContext} from "../context/AuthContext";
 import {useMemo} from "react";
+import {Link} from "react-router-dom";
 
 const LogIn = () => {
   const {currentUser, login} = useAuthContext();
@@ -24,9 +25,12 @@ const LogOut = () => {
 const Navigation = () => (
     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
       <li className="nav-item">
-        <a className="nav-link active" aria-current="page" href="#">
+        <Link className="nav-link active" aria-current="page" to="/">
           Home
-        </a>
+        </Link>
+      </li>
+      <li className="nav-item">
+        <Link className="nav-link" to="/stocks">My Stocks</Link>
       </li>
     </ul>
 );
