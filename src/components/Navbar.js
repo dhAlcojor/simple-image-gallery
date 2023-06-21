@@ -1,6 +1,8 @@
+import {useMemo, useState} from "react";
+import {Link, useLocation} from "react-router-dom";
+import cn from "classnames";
 import {useAuthContext} from "../context/AuthContext";
-import {useMemo} from "react";
-import {Link} from "react-router-dom";
+import {useFirestoreContext} from "../context/FirestoreContext";
 
 const LogIn = () => {
   const {currentUser, login} = useAuthContext();
@@ -22,32 +24,59 @@ const LogOut = () => {
   );
 };
 
-const Navigation = () => (
-    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-      <li className="nav-item">
-        <Link className="nav-link active" aria-current="page" to="/">
-          Home
-        </Link>
-      </li>
-      <li className="nav-item">
-        <Link className="nav-link" to="/stocks">My Stocks</Link>
-      </li>
-    </ul>
-);
+const Navigation = () => {
+  const {currentUser} = useAuthContext()
+  const {pathname} = useLocation();
+  return (
+      <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+        <li className="nav-item">
+          <Link className={cn("nav-link", {active: pathname === "/"})} aria-current="page" to="/">
+            Home
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link className={cn("nav-link", {active: pathname === "/stockimages"})} to="/stockimages">
+            My Stock Images
+          </Link>
+        </li>
+        {currentUser && (
+            <li className="nav-item">
+              <Link className={cn("nav-link", {active: pathname === "/profile"})} to="/profile">
+                Profile
+              </Link>
+            </li>
+        )}
+      </ul>
+  );
+};
 
-const SearchForm = () => (
-    <form className="d-flex">
-      <input
-          className="form-control me-2"
-          type="search"
-          placeholder="Search"
-          aria-label="Search"
-      />
-      <button className="btn btn-outline-success" type="submit">
-        Search
-      </button>
-    </form>
-);
+const SearchForm = () => {
+  const [text, search] = useState(null);
+  const {filterItems} = useFirestoreContext();
+  const handleOnChange = (event) => {
+    search(event.target.value);
+    filterItems(event.target.value);
+  };
+  const handleOnSubmit = (event) => {
+    event.preventDefault();
+    filterItems(text);
+  };
+
+  return (
+      <form className="d-flex" onSubmit={handleOnSubmit}>
+        <input
+            onChange={handleOnChange}
+            className="form-control me-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+        />
+        <button className="btn btn-outline-success" type="submit">
+          Search
+        </button>
+      </form>
+  );
+};
 
 const Dropdown = () => {
   const {currentUser} = useAuthContext();
@@ -83,7 +112,7 @@ const Dropdown = () => {
           <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
             <li>
               <a className="dropdown-item text-center" href="#">
-                {username}
+                {currentUser && <Link to="/profile">{username}</Link>}
               </a>
             </li>
             <li>

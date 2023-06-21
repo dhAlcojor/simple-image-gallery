@@ -1,10 +1,11 @@
-import {createContext, useEffect, useReducer} from "react";
+import {createContext, useContext, useEffect, useMemo, useReducer} from "react";
 import {Firestore} from "../handlers/firestore";
 
-export const FirebaseContext = createContext({});
+export const FirestoreContext = createContext({});
 
 const initialState = {
   items: [],
+  placeholders: [],
   count: 0,
   inputs: {title: null, file: null, path: null},
   isCollapsed: true,
@@ -24,14 +25,21 @@ const reducer = (state, action) => {
       return {
         ...state,
         items: [action.payload.item, ...state.items],
+        placeholders: [action.payload.item, ...state.items],
         count: state.items.length + 1,
         inputs: initialState.inputs,
+      };
+    case 'FILTER_ITEMS':
+      return {
+        ...state,
+        items: action.payload.results,
       };
     case 'SET_ITEMS':
       return {
         ...state,
         items: action.payload.items,
-      }
+        placeholders: action.payload.items,
+      };
     case 'SET_INPUTS':
       return {
         ...state,
@@ -58,7 +66,30 @@ const Provider = ({children}) => {
     read();
   }, []);
   const [state, dispatch] = useReducer(reducer, initialState);
-  return <FirebaseContext.Provider value={{state, dispatch, read}}>{children}</FirebaseContext.Provider>;
+  const filterItems = input => {
+    if (input === "" || input === null) {
+      dispatch({type: "SET_ITEMS", payload: {items: state.placeholders}});
+    }
+
+    let list = state.placeholders.flat();
+    let results = list.filter(item => {
+      const name = item.title.toLowerCase();
+      const searchInput = input.toLowerCase();
+      return name.indexOf(searchInput) !== -1;
+    });
+
+    dispatch({type: "FILTER_ITEMS", payload: {results}});
+  }
+
+  const value = useMemo(() => {
+    return {state, dispatch, read, filterItems};
+  }, [state, dispatch, read, filterItems]);
+
+  return <FirestoreContext.Provider value={value}>{children}</FirestoreContext.Provider>;
 }
+
+export const useFirestoreContext = () => {
+  return useContext(FirestoreContext);
+};
 
 export default Provider;

@@ -8,7 +8,7 @@ export const Firestore = {
     return new Promise(async resolve => {
       try {
         const snapshots = await getDocs(ref);
-        snapshots.forEach(doc => docs.push(doc.data()));
+        snapshots.forEach(doc => docs.push({...doc.data(), id: doc.id}));
         resolve(docs);
       } catch (e) {
         console.error(e);

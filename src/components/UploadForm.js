@@ -1,5 +1,5 @@
 import {useContext, useMemo} from "react";
-import {FirebaseContext} from "../context/FirebaseContext";
+import {FirestoreContext} from "../context/FirestoreContext";
 import {Firestore} from "../handlers/firestore";
 import Storage from "../handlers/storage";
 import {useAuthContext} from "../context/AuthContext";
@@ -8,7 +8,7 @@ const {writeDoc} = Firestore;
 const {downloadFile, uploadFile} = Storage;
 
 const Preview = () => {
-  const {state} = useContext(FirebaseContext);
+  const {state} = useContext(FirestoreContext);
   const {path} = state.inputs;
   return path && (
       <div
@@ -25,7 +25,7 @@ const Preview = () => {
 
 const UploadForm = () => {
   const {currentUser} = useAuthContext();
-  const {dispatch, state: {inputs, isCollapsed}, read} = useContext(FirebaseContext);
+  const {dispatch, state: {inputs, isCollapsed}, read} = useContext(FirestoreContext);
   const isDisabled = useMemo(() => {
     return !!Object.values(inputs).some((input) => input === null);
   }, [inputs]);

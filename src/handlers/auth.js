@@ -15,7 +15,8 @@ const FirebaseAuth = {
     });
   },
   signOut: () => {
-    signOut(auth).then(() => console.log("User logged out"))
+    signOut(auth)
+        .then(() => console.log("User logged out"))
         .catch((error) => console.error(error));
   },
   getCurrentUser: () => {

@@ -1,9 +1,16 @@
 import {useMemo} from "react";
+import {useNavigate} from "react-router-dom";
 
-const Card = ({path, title, createdAt, user}) => {
+const Card = ({id, path, title, createdAt, user}) => {
+  const navigate = useNavigate();
   const timestamp = useMemo(() => createdAt ? new Date(createdAt.seconds * 1000).toLocaleDateString() : "", [createdAt]);
+
+  const handleOnClick = () => {
+    navigate(`/images/${id}`, {state: {id}});
+  };
+
   return (
-      <div className="col mb-5">
+      <div className="col mb-5" style={{cursor: "pointer"}} onClick={handleOnClick}>
         <div className="card" style={{width: "18rem"}}>
           <div style={{
             height: "220px",

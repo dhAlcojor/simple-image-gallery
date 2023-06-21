@@ -8,7 +8,10 @@ const AuthProvider = ({children}) => {
   const [currentUser, setCurrentUser] = useState(null);
 
   const login = useCallback(() => signIn().then(setCurrentUser), [setCurrentUser]);
-  const logout = useCallback(() => signOut().then(() => setCurrentUser(null)), [setCurrentUser]);
+  const logout = useCallback(() => {
+    signOut();
+    setCurrentUser(null);
+  }, [setCurrentUser]);
   const authenticate = useCallback(() => getCurrentUser().then(setCurrentUser), [setCurrentUser]);
 
   const value = useMemo(() => {

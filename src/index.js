@@ -1,13 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import Provider from "./context/FirebaseContext";
+import Provider from "./context/FirestoreContext";
 import reportWebVitals from './reportWebVitals';
 import App from './App';
 import './index.css';
-import AuthProvider from "./context/AuthContext";
+import AuthProvider, {useAuthContext} from "./context/AuthContext";
 import Layout from "./components/Layout";
-import Stocks from "./components/Stocks";
+import StockImages from "./components/StockImages";
+import Single from "./components/Single";
+import NotFound from "./components/NotFound";
+import Profile from "./components/Profile";
+
+const AppRoutes = () => {
+  const {currentUser} = useAuthContext();
+  return (
+      <Routes>
+        <Route path="/" element={<App/>}/>
+        <Route path="/images/:id" element={<Single/>}/>
+        <Route path="*" element={<NotFound/>}/>
+        {currentUser && <Route path="/stockimages" element={<StockImages/>}/>}
+        {currentUser && <Route path="/profile" element={<Profile/>}/>}
+      </Routes>
+  );
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -16,10 +32,7 @@ root.render(
         <Provider>
           <Router>
             <Layout>
-              <Routes>
-                <Route path="/" element={<App/>}/>
-                <Route path="/stocks" element={<Stocks/>}/>
-              </Routes>
+              <AppRoutes/>
             </Layout>
           </Router>
         </Provider>

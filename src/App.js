@@ -1,11 +1,11 @@
 import {useContext, useEffect, useMemo} from "react";
-import {FirebaseContext} from "./context/FirebaseContext";
+import {FirestoreContext} from "./context/FirestoreContext";
 import './App.css';
 import {useAuthContext} from "./context/AuthContext";
 import List from "./components/List";
 
 function App() {
-  const {state: {items}} = useContext(FirebaseContext);
+  const {state: {items}} = useContext(FirestoreContext);
   const {authenticate} = useAuthContext();
 
   const count = useMemo(
